@@ -72,8 +72,7 @@ public class EventViews extends Event {
 
 			boolean updated = false;
 			if (runIfModified) {
-				if (database.getLastModified().toJavaDate().compareTo(lastRun) > 1) {
-					System.out.print("run if modified: true");
+				if (database.getLastModified().toJavaDate().compareTo(lastRun) > 0) {
 					event.put("lastRun", new Date());
 					updated = true;
 				}
@@ -83,7 +82,6 @@ public class EventViews extends Event {
 				Date now = new Date();
 				long seconds = (now.getTime()-lastRun.getTime())/1000;
 				if (seconds >= interval) {
-					System.out.print("interval: true");
 					updated = true;
 				};
 			}
