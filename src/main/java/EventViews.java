@@ -1,6 +1,8 @@
 import java.util.Date;
+
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 import lotus.domino.Database;
 import lotus.domino.NotesException;
@@ -60,38 +62,48 @@ public class EventViews extends Event {
 				return;
 			}
 
-			String viewName = (String) event.get("view");
-			View view = database.getView(viewName);
-			if (view == null) {
-				database.recycle();
-				String err = String.format("%s view not found in database %s", viewName, filePath);
-				this.getLogger().severe(err);
-				System.err.print(err);
-				return;
-			}
-
-			boolean updated = false;
-			if (runIfModified) {
-				if (database.getLastModified().toJavaDate().compareTo(lastRun) > 0) {
-					event.put("lastRun", new Date());
-					updated = true;
-				}
-			}
-
-			if (!updated && interval > 0) {
-				Date now = new Date();
-				long seconds = (now.getTime()-lastRun.getTime())/1000;
-				if (seconds >= interval) {
-					updated = true;
-				};
-			}
+			Vector<String> views = (Vector<String>) event.get("views");
 			
-			if (updated) {
-				view.refresh();
-				event.put("lastRun", new Date());
+			for (int i = 0; i<views.size(); i++) {
+				String viewName = views.get(i);
+				View view = database.getView(viewName);
+
+				if (view == null) {
+					database.recycle();
+					String err = String.format("%s view not found in database %s", viewName, filePath);
+					this.getLogger().severe(err);
+					System.err.print(err);
+					return;
+				}
+
+				boolean updated = false;
+				if (runIfModified) {
+					if (database.getLastModified().toJavaDate().compareTo(lastRun) > 0) {
+						event.put("lastRun", new Date());
+						updated = true;
+						System.out.println(database.getTitle() + " - modified");
+					}
+				}
+				
+				if (!updated && interval > 0) {
+					Date now = new Date();
+					long seconds = (now.getTime()-lastRun.getTime())/1000;
+					if (seconds >= interval) {
+						updated = true;
+						System.out.println(database.getTitle() + " - interval");
+					};
+				}
+
+				if (updated) {
+					System.out.println(view.getName() + ": refresh!");
+					view.refresh();
+					event.put("lastRun", new Date());
+				}
+
+				view.recycle();
+
 			}
 
-			view.recycle();
 			database.recycle();
 		} catch (NotesException e) {
 			e.printStackTrace();
