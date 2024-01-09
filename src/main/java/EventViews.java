@@ -28,16 +28,6 @@ public class EventViews extends Event {
 		}
 	}
 
-	public void triggerHelperOnStart() {
-		for (int i = 0; i < events.size(); i++) {
-			HashMap<String, Object> event = events.get(i);
-			boolean runOnStart = (Boolean) event.get("runOnStart");
-			if (runOnStart) {
-				refreshView(event);
-			}
-		}
-	}
-
 	public void triggerFireForce() {
 		for (int i = 0; i < events.size(); i++) {
 			HashMap<String, Object> event = events.get(i);
@@ -62,6 +52,7 @@ public class EventViews extends Event {
 				return;
 			}
 
+			@SuppressWarnings("unchecked")
 			Vector<String> views = (Vector<String>) event.get("views");
 			
 			for (int i = 0; i<views.size(); i++) {

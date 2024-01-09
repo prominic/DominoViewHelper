@@ -27,12 +27,12 @@ public class ViewsHelper extends JavaServerAddinGenesis {
 
 	@Override
 	protected String getJavaAddinVersion() {
-		return "1.0.1";
+		return "1.0.2";
 	}
 
 	@Override
 	protected String getJavaAddinDate() {
-		return "2023-11-25 21:30";
+		return "2024-09-01 14:00";
 	}
 
 	protected boolean runNotesAfterInitialize() {
@@ -52,11 +52,6 @@ public class ViewsHelper extends JavaServerAddinGenesis {
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	protected void runNotesBeforeListen() {
-		m_event.triggerHelperOnStart();
 	}
 
 	protected boolean resolveMessageQueueState(String cmd) {
@@ -99,6 +94,7 @@ public class ViewsHelper extends JavaServerAddinGenesis {
 
 				String server = doc.getItemValueString("Server");
 				String filePath = doc.getItemValueString("Database");
+				@SuppressWarnings("unchecked")
 				Vector<String> views = doc.getItemValue("Views");
 				long interval = doc.getItemValueInteger("interval");
 				boolean runIfModified = doc.getItemValueString("runIfModified").equals("true");
