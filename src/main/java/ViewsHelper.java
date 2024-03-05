@@ -97,7 +97,7 @@ public class ViewsHelper extends JavaServerAddinGenesis {
 				@SuppressWarnings("unchecked")
 				Vector<String> views = doc.getItemValue("Views");
 				long interval = doc.getItemValueInteger("interval");
-				boolean runIfModified = doc.getItemValueString("runIfModified").equals("true");
+				boolean runIfModified = doc.getItemValueString("runIfModified").equals("1");
 				String log = doc.getItemValueString("Log");
 				
 				HashMap<String, Object> event = new HashMap<String, Object>();
