@@ -40,15 +40,14 @@ public class EventViews extends Event {
 			boolean runIfModified = (Boolean) event.get("runIfModified");
 			Date lastRun = (Date) event.get("lastRun");
 			Long interval = (Long) event.get("interval");
-
 			String server = (String) event.get("server");
 			String filePath = (String) event.get("filePath");
 			Database database = session.getDatabase(server, filePath);
+			String log = (String) event.get("log");
 
 			if (database == null || !database.isOpen()) {
 				String err = String.format("%s !! %s not found", server, filePath);
-				this.getLogger().severe(err);
-				System.err.print(err);
+				logMessage(log, err, true);
 				return;
 			}
 
@@ -62,8 +61,7 @@ public class EventViews extends Event {
 				if (view == null) {
 					database.recycle();
 					String err = String.format("%s view not found in database %s", viewName, filePath);
-					this.getLogger().severe(err);
-					System.err.print(err);
+					logMessage(log, err, true);
 					return;
 				}
 
@@ -72,7 +70,8 @@ public class EventViews extends Event {
 					if (database.getLastModified().toJavaDate().compareTo(lastRun) > 0) {
 						event.put("lastRun", new Date());
 						updated = true;
-						System.out.println(database.getTitle() + " - modified");
+						String message = database.getTitle() + " - modified";
+						logMessage(log, message, false);
 					}
 				}
 				
@@ -81,12 +80,14 @@ public class EventViews extends Event {
 					long seconds = (now.getTime()-lastRun.getTime())/1000;
 					if (seconds >= interval) {
 						updated = true;
-						System.out.println(database.getTitle() + " - interval");
+						String message = database.getTitle() + " - interval";
+						logMessage(log, message, false);
 					};
 				}
 
 				if (updated) {
-					System.out.println(view.getName() + ": refresh!");
+					String message = view.getName() + ": refresh!";
+					logMessage(log, message, false);
 					view.refresh();
 					event.put("lastRun", new Date());
 				}
@@ -101,4 +102,22 @@ public class EventViews extends Event {
 		}
 	}
 
+	private void logMessage(String logOpt, String message, boolean severe) {
+		if (logOpt.equals("1") || logOpt.equals("2")) {
+			if (severe) {
+				getLogger().severe(message);				
+			}
+			else {
+				getLogger().info(message);				
+			}
+		}
+		if (logOpt.equals("2")) {
+			if (severe) {
+				System.err.print(message);
+			}
+			else {
+				System.out.print(message);
+			}
+		}
+	}
 }

@@ -27,14 +27,14 @@ public class ViewsHelper extends JavaServerAddinGenesis {
 
 	@Override
 	protected String getJavaAddinVersion() {
-		return "1.0.2";
+		return "1.0.3";
 	}
 
 	@Override
 	protected String getJavaAddinDate() {
-		return "2024-09-01 14:00";
+		return "2024-03-05 18:00";
 	}
-
+	
 	protected boolean runNotesAfterInitialize() {
 		try {
 			Database database = m_session.getDatabase(null, m_filePath);
@@ -98,7 +98,8 @@ public class ViewsHelper extends JavaServerAddinGenesis {
 				Vector<String> views = doc.getItemValue("Views");
 				long interval = doc.getItemValueInteger("interval");
 				boolean runIfModified = doc.getItemValueString("runIfModified").equals("true");
-
+				String log = doc.getItemValueString("Log");
+				
 				HashMap<String, Object> event = new HashMap<String, Object>();
 				event.put("title", title);
 				event.put("server", server);
@@ -107,7 +108,8 @@ public class ViewsHelper extends JavaServerAddinGenesis {
 				event.put("interval", interval);
 				event.put("runIfModified", runIfModified);
 				event.put("lastRun", new Date());
-
+				event.put("log", log);
+				
 				list.add(event);
 
 				recycle(doc);
